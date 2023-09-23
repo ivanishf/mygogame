@@ -1,3 +1,5 @@
+from typing import Type, List
+
 import pygame
 import random
 import math
@@ -29,8 +31,9 @@ class Game:
     SWAP_SPEED = 4
     DROP_SPEED = 11
     USING_SKILL = 0
+    MOUSEDOWN=False
 
-    def __init__(self, screen, charas):
+    def __init__(self, screen, charas: List[Character]):
         self.screen = screen
         self.field = [[0 for y in range(8)] for x in range(8)]
         self.drop_list = []
@@ -40,17 +43,12 @@ class Game:
         self.clock = pygame.time.Clock()
         self.swap_source = (0, 0)
         self.swap_dest = (0, 0)
+        self.charas =charas
         # TBC
         self.cube_empty = pygame.image.load('images/bg/background_cube.png')
-        self.cube_phyatk = pygame.image.load('images/bg/physical_attack.png')
-        self.cube_magatk = pygame.image.load('images/bg/magic_attack.png')
-        self.cube_hp = pygame.image.load('images/bg/hp_potion.png')
-        self.cube_mp = pygame.image.load('images/bg/mp_potion.png')
-        self.cube_map = {0: self.cube_empty,
-                         1: self.cube_phyatk,
-                         2: self.cube_magatk,
-                         3: self.cube_hp,
-                         4: self.cube_mp}
+        self.cube_map = {0: self.cube_empty}
+        for i in range(len(self.charas)):
+            self.cube_map[i + 1] = charas[i].img
 
     def init_field(self):
         """
@@ -70,7 +68,7 @@ class Game:
         """
         for i in range(len(self.field[0])):
             if self.field[0][i] == self.CubeType.EMPTY:  # TBC
-                self.field[0][i] = random.randint(1, 4)
+                self.field[0][i] = random.randint(1, len(self.charas))
 
     def gravity(self):
         """
@@ -292,6 +290,9 @@ class Game:
                 if event.type == pygame.QUIT:
                     exit()
                 if event.type == pygame.MOUSEBUTTONDOWN:
+                    self.MOUSEDOWN=True
+                    prex, prey = pygame.mouse.get_pos()
+                if event.type == pygame.MOUSEBUTTONUP:
                     mx, my = pygame.mouse.get_pos()
                     if (self.FEILD_X <= mx <= self.FEILD_X + 8 * self.CUBE_WIDTH and
                             self.FEILD_Y + self.CUBE_HEIGHT <= my <= self.FEILD_Y + 8 * self.CUBE_HEIGHT):
@@ -354,8 +355,9 @@ if __name__ == '__main__':
     pygame.init()
     screen = pygame.display.set_mode((800, 600))
     charas = []
-    level = getfile("levels/1.json")
+    level = getfile("levels/2.json")
     for chara in level["charas"]:
-        charas.append()
+        charafile = getfile("charas/" + chara + ".json")
+        charas.append(Character.dict2cha(charafile))
     game = Game(screen, charas)
     game.run()
