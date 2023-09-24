@@ -294,7 +294,58 @@ class Game:
                     prex, prey = pygame.mouse.get_pos()
                 if event.type == pygame.MOUSEBUTTONUP:
                     mx, my = pygame.mouse.get_pos()
-                    if (self.FEILD_X <= mx <= self.FEILD_X + 8 * self.CUBE_WIDTH and
+                    if self.MOUSEDOWN==True:
+                        if (self.FEILD_X <= mx <= self.FEILD_X + 8 * self.CUBE_WIDTH and
+                                self.FEILD_Y + self.CUBE_HEIGHT <= my <= self.FEILD_Y + 8 * self.CUBE_HEIGHT):
+                            if self.SWAPPING == 0:
+                                if ((mx-self.FEILD_X)//self.CUBE_WIDTH==(prex-self.FEILD_X)//self.CUBE_WIDTH
+                                    and (my-self.FEILD_Y)//self.CUBE_HEIGHT==(prey-self.FEILD_Y)//self.CUBE_HEIGHT):  # 如果两个在一个位置 高亮选中块
+                                    self.swap_source = (mx, my)
+                                    self.SWAPPING = 1
+                                    print('click another')
+                                else: # 如果两个不相邻
+                                    if True:
+                                        print('swaping')
+                                        self.swap_source = (prex, prey)
+                                        self.swap_dest = (mx, my)
+                                        swapnum = self.swap()
+                                        self.after_swap(swapnum)
+                                        self.SWAPPING = 0
+
+                            elif self.SWAPPING == 1:
+                                if ((mx - self.FEILD_X) // self.CUBE_WIDTH == (prex - self.FEILD_X) // self.CUBE_WIDTH
+                                        and (my - self.FEILD_Y) // self.CUBE_HEIGHT == (
+                                                prey - self.FEILD_Y) // self.CUBE_HEIGHT):  # 如果两个在一个位置 高亮选中块
+                                    if True:
+                                        print('swaping')
+                                        self.swap_dest = (mx, my)
+                                        swapnum = self.swap()
+                                        self.after_swap(swapnum)
+                                        self.SWAPPING = 0
+                                else: # 否则直接取消
+                                    pass
+                            pass
+                        else:
+                            print('cancel swap')
+                            self.SWAPPING = 0
+                            self.USING_SKILL = 0
+                            # self.skill_blocks.clear()
+                            # self.skill_block_num = 0
+                            if (self.SKILL_AREA_X <= mx <= self.SKILL_AREA_X + 330 and
+                                    self.SKILL_AREA_Y <= my <= self.SKILL_AREA_Y + self.SKILL_HEIGHT):
+                                skill_chosen = (mx - self.SKILL_AREA_X) // 90
+                                # if (mx - self.SKILL_AREA_X - skill_chosen * 90) <= 60:
+                                #     print(skill_chosen)
+                                #     self.USING_SKILL = skill_chosen + 1
+                                #     self.skill_block_num = self.player.skill_index(self.field, skill_chosen)
+                                #     if self.skill_block_num == 0:
+                                #         self.USING_SKILL = 0
+                                #         self.after_swap(1)
+                                #     elif self.skill_block_num == -1:
+                                #         self.USING_SKILL = 0
+                            # TBC if in menu area
+                        self.MOUSEDOWN=False
+                    elif (self.FEILD_X <= mx <= self.FEILD_X + 8 * self.CUBE_WIDTH and
                             self.FEILD_Y + self.CUBE_HEIGHT <= my <= self.FEILD_Y + 8 * self.CUBE_HEIGHT):
                         if self.USING_SKILL:  # TBC USINGitem
                             self.USING_SKILL = 0
